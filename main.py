@@ -9,7 +9,13 @@ con = sqlite3.connect("example.db")
 
 cur = con.cursor()
 cur.executescript("""
- 
+ insert into person(jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon)
+ values (
+    'Jan',
+    'Novák',
+    '041107/4719',
+    
+    )
     """)
 
 """
@@ -33,7 +39,7 @@ for row in data:
     table.append(row)
 con.close()
 
-
+print(table)
 
 # Hlavní konfigurace tkinteru
 window = tk.Tk()
