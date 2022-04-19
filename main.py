@@ -49,6 +49,8 @@ def exit():
 def New_User():
 
     newuserframe = tk.Frame(window,width=900, height=250, bg="white")
+
+
     ljmeno=tk.Label(newuserframe,text="Jméno")
     ljmeno.grid(column=1, row=1)
 
@@ -86,7 +88,7 @@ def New_User():
     telefon.grid(column=2, row=6)
 
     submit = tk.Button(newuserframe,text="Přidat", command=save_user)
-    submit.grid()
+    submit.grid(column=2, row=7)
 
     newuserframe.grid(column=0, row=0)
 
