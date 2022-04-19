@@ -36,6 +36,11 @@ for row in data:
     table.append(row)
 con.close()
 
+def save_user():
+    if jmeno.get() != "" and prijmeni.get() != "" and rodne_cislo.get() != "" and pohlavi.get() != "" and email.get() != "" and telefon.get() != "":
+        print("aaa")
+
+
 def New_User():
     label1.pack_forget()
     create.pack_forget()
@@ -65,14 +70,8 @@ def New_User():
     ltelefon.pack()
     telefon.pack()
 
-
     submit = tk.Button(text="Přidat", command=save_user)
     submit.pack()
-
-
-def save_user():
-    if jmeno.get() != "" and prijmeni.get() != "" and rodne_cislo.get() != "" and pohlavi.get() != "" and email.get() != "" and telefon.get() != "":
-        print("aaa")
 
 print(table)
 
