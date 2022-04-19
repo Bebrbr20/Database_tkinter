@@ -1,6 +1,13 @@
 import sqlite3
 import tkinter as tk
-import time
+from tkinter import ttk
+from tkinter.messagebox import showinfo
+
+
+window = tk.Tk()
+window.geometry("900x250")
+window.title("Databáze")
+
 
 # vytvoreni DB v paměti PC
 
@@ -11,6 +18,7 @@ con = sqlite3.connect("example.db")
 cur = con.cursor()
 
 cur.executescript("""
+
     """)
 
 
@@ -27,64 +35,115 @@ cur.executescript("""
 """
 
 
-data = cur.execute("SELECT * FROM person ORDER BY jmeno")
 
-table = []
 
-for row in data:
-    print(row)
-    table.append(row)
-con.close()
+
 
 def save_user():
     if jmeno.get() != "" and prijmeni.get() != "" and rodne_cislo.get() != "" and pohlavi.get() != "" and email.get() != "" and telefon.get() != "":
         print("aaa")
 
+def exit():
+    window.destroy()
 
 def New_User():
-    label1.pack_forget()
-    create.pack_forget()
-    ljmeno=tk.Label(text="Jméno")
-    jmeno=tk.Entry(text="Jméno")
-    lprijmeni = tk.Label(text="Příjmení")
-    prijmeni = tk.Entry()
-    lrodne_cislo = tk.Label(text="Rodné číslo")
-    rodne_cislo = tk.Entry()
-    lpohlavi = tk.Label(text="Pohlaví")
-    pohlavi = tk.Entry()
-    lemail = tk.Label(text="Email")
-    email = tk.Entry()
-    ltelefon = tk.Label(text="Telefonní číslo")
-    telefon = tk.Entry()
 
-    ljmeno.pack()
-    jmeno.pack()
-    lprijmeni.pack()
-    prijmeni.pack()
-    lrodne_cislo.pack()
-    rodne_cislo.pack()
-    lpohlavi.pack()
-    pohlavi.pack()
-    lemail.pack()
-    email.pack()
-    ltelefon.pack()
-    telefon.pack()
+    newuserframe = tk.Frame(window,width=900, height=250, bg="white")
+    ljmeno=tk.Label(newuserframe,text="Jméno")
+    ljmeno.grid(column=1, row=1)
 
-    submit = tk.Button(text="Přidat", command=save_user)
-    submit.pack()
+    jmeno=tk.Entry(newuserframe,text="Jméno")
+    jmeno.grid(column=2, row=1)
 
-print(table)
+    lprijmeni = tk.Label(newuserframe,text="Příjmení")
+    lprijmeni.grid(column=1, row=2)
+
+    prijmeni = tk.Entry(newuserframe)
+    prijmeni.grid(column=2, row=2)
+
+    lrodne_cislo = tk.Label(newuserframe,text="Rodné číslo")
+    lrodne_cislo.grid(column=1, row=3)
+
+    rodne_cislo = tk.Entry(newuserframe)
+    rodne_cislo.grid(column=2, row=3)
+
+    lpohlavi = tk.Label(newuserframe,text="Pohlaví")
+    lpohlavi.grid(column=1, row=4)
+
+    pohlavi = tk.Entry(newuserframe)
+    pohlavi.grid(column=2, row=4)
+
+    lemail = tk.Label(newuserframe,text="Email")
+    lemail.grid(column=1, row=5)
+
+    email = tk.Entry(newuserframe)
+    email.grid(column=2, row=5)
+
+    ltelefon = tk.Label(newuserframe,text="Telefonní číslo")
+    ltelefon.grid(column=1, row=6)
+
+    telefon = tk.Entry(newuserframe)
+    telefon.grid(column=2, row=6)
+
+    submit = tk.Button(newuserframe,text="Přidat", command=save_user)
+    submit.grid()
+
+    newuserframe.grid(column=0, row=0)
 
 # Hlavní konfigurace tkinteru
-window = tk.Tk()
-window.geometry("570x350")
-window.title("Databáze")
 
-label1=tk.Label(text = "Databáze uživatelů")
+
+
+mainframe = tk.Frame(window,width=900, height=250, bg="white")
+
+label1=tk.Label(mainframe,text = "Databáze uživatelů")
 label1.pack()
 
-create=tk.Button(text= "Přidání uživatele", command=New_User)
-create.pack()
+
+
+tv = ttk.Treeview(mainframe)
+tv['columns'] = ('jmeno', 'prijmeni', 'rodne_cislo', 'pohlavi', 'email', 'telefon')
+tv.column('#0', width=0, stretch=tk.NO)
+tv.column('jmeno', anchor=tk.CENTER, width=150)
+tv.column('prijmeni', anchor=tk.CENTER, width=150)
+tv.column('rodne_cislo', anchor=tk.CENTER, width=150)
+tv.column('pohlavi', anchor=tk.CENTER, width=150)
+tv.column('email', anchor=tk.CENTER, width=150)
+tv.column('telefon', anchor=tk.CENTER, width=150)
+
+tv.heading('#0', text='', anchor=tk.CENTER)
+tv.heading('jmeno', text='Jméno', anchor=tk.CENTER)
+tv.heading('prijmeni', text='Příjmení', anchor=tk.CENTER)
+tv.heading('rodne_cislo', text='Rodné číslo', anchor=tk.CENTER)
+tv.heading('pohlavi', text='Pohlaví', anchor=tk.CENTER)
+tv.heading('email', text='E-mail', anchor=tk.CENTER)
+tv.heading('telefon', text='Telefon', anchor=tk.CENTER)
+
+data = cur.execute("SELECT * FROM person ORDER BY jmeno")
+
+rows = data.fetchall()
+
+for row in rows:
+    print(row)
+
+    tv.insert("", tk.END, values=row)
+
+data.close()
+con.close()
+
+tv.pack()
+
+
+bluebutton = tk.Button(mainframe, text="Přidání uživatele", fg="black" , command=New_User)
+bluebutton.pack( side = tk.LEFT )
+
+blackbutton = tk.Button(mainframe, text="Odebrání uživatele", fg="black")
+blackbutton.pack( side = tk.LEFT)
+
+blackbutton = tk.Button(mainframe, text="Ukončit aplikaci", fg="black", command=exit)
+blackbutton.pack(side=tk.LEFT)
+
+mainframe.grid(row=0, column=0)
 
 
 window.mainloop()
