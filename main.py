@@ -41,7 +41,21 @@ cur.executescript("""
 
 def save_user(jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
     if jmeno != "" and prijmeni != "" and rodne_cislo != "" and pohlavi != "" and email != "" and telefon != "":
-        print("aaa")
+        con = sqlite3.connect("example.db")
+
+        cur = con.cursor()
+
+        cur.executescript("""
+             insert into person(jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon)
+                 values (
+                    %jmeno,
+                    %prijmeni,
+                    %rodne_cislo,
+                    %pohlavi,
+                    %email,
+                    %telefon
+                    )
+            """)
     else:
         errorLabel=tk.Label( text="ERROR")
         errorLabel.grid(row=1, column= 5)
