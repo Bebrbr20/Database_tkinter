@@ -39,64 +39,79 @@ cur.executescript("""
 
 
 
-def save_user():
-    if jmeno.get() != "" and prijmeni.get() != "" and rodne_cislo.get() != "" and pohlavi.get() != "" and email.get() != "" and telefon.get() != "":
+def save_user(jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
+    if jmeno != "" and prijmeni != "" and rodne_cislo != "" and pohlavi != "" and email != "" and telefon != "":
         print("aaa")
+    else:
+        errorLabel=tk.Label( text="ERROR")
+        errorLabel.grid(row=1, column= 5)
 
 def exit():
     window.destroy()
 
+
 def New_User():
 
-    newuserframe = tk.Frame(window,width=900, height=250, bg="white")
+    newuserframe = tk.Frame(window, width=900, height=250)
+
+    newuserframe.grid(row=0, column=0)
+    newuserframe.grid_propagate(0)
+
 
 
     ljmeno=tk.Label(newuserframe,text="Jméno")
-    ljmeno.grid(column=1, row=1)
+    ljmeno.grid(column=4, row=1)
 
     jmeno=tk.Entry(newuserframe,text="Jméno")
-    jmeno.grid(column=2, row=1)
+    jmeno.grid(column=5, row=1)
 
     lprijmeni = tk.Label(newuserframe,text="Příjmení")
-    lprijmeni.grid(column=1, row=2)
+    lprijmeni.grid(column=4, row=2)
 
     prijmeni = tk.Entry(newuserframe)
-    prijmeni.grid(column=2, row=2)
+    prijmeni.grid(column=5, row=2)
 
     lrodne_cislo = tk.Label(newuserframe,text="Rodné číslo")
-    lrodne_cislo.grid(column=1, row=3)
+    lrodne_cislo.grid(column=4, row=3)
 
     rodne_cislo = tk.Entry(newuserframe)
-    rodne_cislo.grid(column=2, row=3)
+    rodne_cislo.grid(column=5, row=3)
 
     lpohlavi = tk.Label(newuserframe,text="Pohlaví")
-    lpohlavi.grid(column=1, row=4)
+    lpohlavi.grid(column=4, row=4)
 
     pohlavi = tk.Entry(newuserframe)
-    pohlavi.grid(column=2, row=4)
+    pohlavi.grid(column=5, row=4)
 
     lemail = tk.Label(newuserframe,text="Email")
-    lemail.grid(column=1, row=5)
+    lemail.grid(column=4, row=5)
 
     email = tk.Entry(newuserframe)
-    email.grid(column=2, row=5)
+    email.grid(column=5, row=5)
 
     ltelefon = tk.Label(newuserframe,text="Telefonní číslo")
-    ltelefon.grid(column=1, row=6)
+    ltelefon.grid(column=4, row=6)
 
     telefon = tk.Entry(newuserframe)
-    telefon.grid(column=2, row=6)
+    telefon.grid(column=5, row=6)
 
-    submit = tk.Button(newuserframe,text="Přidat", command=save_user)
-    submit.grid(column=2, row=7)
+    submit = tk.Button(
+        newuserframe,
+        text="Přidat",
+        command=lambda: save_user(jmeno.get(),prijmeni.get(),rodne_cislo.get(), pohlavi.get(), email.get(), telefon.get()))
+    submit.grid(column=0, row=9, sticky='w')
 
-    newuserframe.grid(column=0, row=0)
+    backbutton = tk.Button(newuserframe, text="Zpět", fg="black", command=lambda:newuserframe.grid_forget())
+    backbutton.grid(row=9, column=1, sticky='w')
+
+    exitbutton = tk.Button(newuserframe, text="Ukončit aplikaci", fg="black", command=exit)
+    exitbutton.grid(row=9, column=2, sticky='w')
 
 # Hlavní konfigurace tkinteru
 
 
 
-mainframe = tk.Frame(window,width=900, height=250, bg="white")
+mainframe = tk.Frame(window,width=900, height=250)
 
 label1=tk.Label(mainframe,text = "Databáze uživatelů")
 label1.pack()
