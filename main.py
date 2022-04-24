@@ -12,15 +12,6 @@ window.title("Databáze")
 
 #con = sqlite3.connect(":memory:")
 
-con = sqlite3.connect("example.db")
-
-cur = con.cursor()
-
-cur.executescript("""
-
-    """)
-
-
 """
  insert into person(jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon)
  values (
@@ -48,7 +39,7 @@ def validaceRC(rc):
     else:
         return False
 
-def save_user(jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
+def save_user(newuserframe,jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
     if jmeno.get() == '':
         jmeno.config(bg='red')
     else:
@@ -75,7 +66,7 @@ def save_user(jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
         telefon.config(bg='white')
 
     if jmeno.get() != '' or prijmeni.get() != '' or rodne_cislo.get() != '' or pohlavi.get() != '' or email.get() != '' or telefon.get() != '':
-        if not validaceRC(rodne_cislo.get()):
+        if validaceRC(rodne_cislo.get()):
             try:
 
                 con = sqlite3.connect("example.db")
@@ -83,8 +74,10 @@ def save_user(jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
                 cur = con.cursor()
                 cur.execute("insert into person(jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon) values(?,?,?,?,?,?)",(jmeno.get(), prijmeni.get(), rodne_cislo.get(), pohlavi.get(), email.get(), telefon.get()))
                 con.commit()
-                tv.insert("", tk.END, values=(jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon))
-                return "OK"
+                tv.insert("", tk.END, values=(jmeno.get(), prijmeni.get(), rodne_cislo.get(), pohlavi.get(), email.get(), telefon.get()))
+                newuserframe.grid_forget()
+
+
             except:
                 print("ERROR PŘI ZAPISOVÁNÍ")
                 return "ERROR PŘI ZAPISOVÁNÍ"
@@ -166,19 +159,36 @@ def focus_user(event):
     delete_item = tv.item(tv.focus())
     focus_item = delete_item['values']
     print(focus_item)
+
+
 def delete_user():
-    print(focus_item[2])
     try:
+        con2 = sqlite3.connect("example.db")
+
+        cur2 = con2.cursor()
+        cur2.execute("DELETE FROM person WHERE (jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon) = (?,?,?,?,?,?)", (str(focus_item[0]), str(focus_item[1]), str(focus_item[2]),str(focus_item[3]),str(focus_item[4]), str(focus_item[5])))
+        con2.commit()
+        con2.close()
+
+        tv.delete(*tv.get_children())
+
         con = sqlite3.connect("example.db")
 
         cur = con.cursor()
 
-        cur.execute("delete from person where (jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon) == (?,?,?,?,?,?)", (focus_item[0], focus_item[1], focus_item[2],focus_item[3],focus_item[4], focus_item[5]))
-        con.commit()
+        data = cur.execute("SELECT * FROM person ORDER BY jmeno")
 
+        rows = data.fetchall()
+
+        for row in rows:
+            tv.insert("", tk.END, values=row)
+
+        data.close()
+        con.close()
 
     except:
         print ("není vybrán žádný uživatel")
+
 
 def exit():
     window.destroy()
@@ -232,7 +242,7 @@ def New_User():
     submit = tk.Button(
         newuserframe,
         text="Přidat",
-        command=lambda: save_user(jmeno,prijmeni,rodne_cislo, pohlavi, email, telefon))
+        command=lambda: save_user(newuserframe, jmeno,prijmeni,rodne_cislo, pohlavi, email, telefon))
     submit.grid(column=0, row=9, sticky='w')
 
     backbutton = tk.Button(newuserframe, text="Zpět", fg="black", command=lambda:newuserframe.grid_forget())
@@ -240,6 +250,11 @@ def New_User():
 
     exitbutton = tk.Button(newuserframe, text="Ukončit aplikaci", fg="black", command=exit)
     exitbutton.grid(row=9, column=2, sticky='w')
+
+
+
+
+
 
 # Hlavní konfigurace tkinteru
 
@@ -251,6 +266,9 @@ label1=tk.Label(mainframe,text = "Databáze uživatelů")
 label1.pack()
 
 
+con = sqlite3.connect("example.db")
+
+cur = con.cursor()
 
 tv = ttk.Treeview(mainframe)
 tv['columns'] = ('jmeno', 'prijmeni', 'rodne_cislo', 'pohlavi', 'email', 'telefon')
@@ -269,7 +287,6 @@ tv.heading('rodne_cislo', text='Rodné číslo', anchor=tk.CENTER)
 tv.heading('pohlavi', text='Pohlaví', anchor=tk.CENTER)
 tv.heading('email', text='E-mail', anchor=tk.CENTER)
 tv.heading('telefon', text='Telefon', anchor=tk.CENTER)
-
 data = cur.execute("SELECT * FROM person ORDER BY jmeno")
 
 rows = data.fetchall()
