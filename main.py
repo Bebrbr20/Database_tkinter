@@ -82,6 +82,61 @@ def save_user(newuserframe,jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon
                 print("ERROR PŘI ZAPISOVÁNÍ")
                 return "ERROR PŘI ZAPISOVÁNÍ"
 
+def update_user(edituserframe,jmeno,prijmeni,rodne_cislo, pohlavi, email, telefon):
+    if jmeno.get() == '':
+        jmeno.config(bg='red')
+    else:
+        jmeno.config(bg='white')
+    if prijmeni.get() == '':
+        prijmeni.config(bg='red')
+    else:
+        prijmeni.config(bg='white')
+    if rodne_cislo.get() == '' or not validaceRC(rodne_cislo.get()):
+        rodne_cislo.config(bg='red')
+    else:
+        rodne_cislo.config(bg='white')
+    if pohlavi.get() == '':
+        pohlavi.config(bg='red')
+    else:
+        pohlavi.config(bg='white')
+    if email.get() == '':
+        email.config(bg='red')
+    else:
+        email.config(bg='white')
+    if telefon.get() == '':
+        telefon.config(bg='red')
+    else:
+        telefon.config(bg='white')
+
+    if jmeno.get() != '' or prijmeni.get() != '' or rodne_cislo.get() != '' or pohlavi.get() != '' or email.get() != '' or telefon.get() != '':
+        if validaceRC(rodne_cislo.get()):
+            try:
+
+                con = sqlite3.connect("example.db")
+
+                cur = con.cursor()
+                cur.execute("UPDATE person SET (jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon) = (?,?,?,?,?,?) WHERE (jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon) = (?,?,?,?,?,?)",(jmeno.get(), prijmeni.get(), rodne_cislo.get(), pohlavi.get(), email.get(), telefon.get(), str(selected_item['values'][0]), str(selected_item['values'][1]), str(selected_item['values'][2]), str(selected_item['values'][3]), str(selected_item['values'][4]), str(selected_item['values'][5])))
+                con.commit()
+
+                tv.delete(*tv.get_children())
+
+                con = sqlite3.connect("example.db")
+
+                cur = con.cursor()
+
+                data = cur.execute("SELECT * FROM person ORDER BY jmeno")
+
+                rows = data.fetchall()
+
+                for row in rows:
+                    tv.insert("", tk.END, values=row)
+
+                data.close()
+                con.close()
+
+                edituserframe.grid_forget()
+            except:
+                print("ERROR PŘI ZAPISOVÁNÍ")
 
 
 def select_item(event):
@@ -144,7 +199,7 @@ def select_item(event):
     submit = tk.Button(
         edituserframe,
         text="Přidat",
-        command=lambda: save_user(jmeno,prijmeni,rodne_cislo, pohlavi, email, telefon))
+        command=lambda: update_user(edituserframe,jmeno,prijmeni,rodne_cislo, pohlavi, email, telefon))
     submit.grid(column=0, row=9, sticky='w')
 
     backbutton = tk.Button(edituserframe, text="Zpět", fg="black", command=lambda:edituserframe.grid_forget())
