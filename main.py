@@ -12,6 +12,7 @@ window.title("Databáze")
 
 #con = sqlite3.connect(":memory:")
 
+#Skript pro umělé vytvoření
 """
  insert into person(jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon)
  values (
@@ -24,7 +25,7 @@ window.title("Databáze")
     )
 """
 
-
+# Funkce pro ověření rodného čísla
 def validaceRC(rc):
     x = list(rc)
     if len(rc) == 11:
@@ -39,6 +40,8 @@ def validaceRC(rc):
     else:
         return False
 
+
+# Funkce pro ověření a případné uložení uživatele do DB
 def save_user(newuserframe,jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
     if jmeno.get() == '':
         jmeno.config(bg='red')
@@ -82,6 +85,8 @@ def save_user(newuserframe,jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon
                 print("ERROR PŘI ZAPISOVÁNÍ")
                 return "ERROR PŘI ZAPISOVÁNÍ"
 
+
+# Funkce pro ověření a případný update uživatele
 def update_user(edituserframe,jmeno,prijmeni,rodne_cislo, pohlavi, email, telefon):
     if jmeno.get() == '':
         jmeno.config(bg='red')
@@ -138,6 +143,7 @@ def update_user(edituserframe,jmeno,prijmeni,rodne_cislo, pohlavi, email, telefo
             except:
                 print("ERROR PŘI ZAPISOVÁNÍ")
 
+# Funkce na upravení uživatele, po dvojkliku otevře upavovací okno
 
 def select_item(event):
     global selected_item
@@ -208,6 +214,8 @@ def select_item(event):
     exitbutton = tk.Button(edituserframe, text="Ukončit aplikaci", fg="black", command=exit)
     exitbutton.grid(row=9, column=2, sticky='w')
 
+
+# Funkce uloží do globální proměné položku na kterou bylo kliknuto
 def focus_user(event):
     global focus_item
     rowid = tv.identify_row(event.y)
@@ -215,7 +223,7 @@ def focus_user(event):
     focus_item = delete_item['values']
     print(focus_item)
 
-
+# Funkce smaže vybranou položku
 def delete_user():
     try:
         con2 = sqlite3.connect("example.db")
@@ -244,11 +252,11 @@ def delete_user():
     except:
         print ("není vybrán žádný uživatel")
 
-
+# Funkce pro ukončení skriptu
 def exit():
     window.destroy()
 
-
+# funkce pro vytvoření nového uživatele
 def New_User():
 
     newuserframe = tk.Frame(window, width=900, height=250)
@@ -306,14 +314,7 @@ def New_User():
     exitbutton = tk.Button(newuserframe, text="Ukončit aplikaci", fg="black", command=exit)
     exitbutton.grid(row=9, column=2, sticky='w')
 
-
-
-
-
-
 # Hlavní konfigurace tkinteru
-
-
 
 mainframe = tk.Frame(window,width=900, height=250)
 
@@ -325,6 +326,7 @@ con = sqlite3.connect("example.db")
 
 cur = con.cursor()
 
+# Definování treeview
 tv = ttk.Treeview(mainframe)
 tv['columns'] = ('jmeno', 'prijmeni', 'rodne_cislo', 'pohlavi', 'email', 'telefon')
 tv.column('#0', width=0, stretch=tk.NO)
@@ -342,6 +344,8 @@ tv.heading('rodne_cislo', text='Rodné číslo', anchor=tk.CENTER)
 tv.heading('pohlavi', text='Pohlaví', anchor=tk.CENTER)
 tv.heading('email', text='E-mail', anchor=tk.CENTER)
 tv.heading('telefon', text='Telefon', anchor=tk.CENTER)
+
+# nahrání dat do treeview
 data = cur.execute("SELECT * FROM person ORDER BY jmeno")
 
 rows = data.fetchall()
