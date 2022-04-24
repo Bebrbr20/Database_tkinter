@@ -9,7 +9,6 @@ window.geometry("900x250")
 window.title("Databáze")
 
 
-# vytvoreni DB v paměti PC
 
 #con = sqlite3.connect(":memory:")
 
@@ -160,6 +159,27 @@ def select_item(event):
 
     exitbutton = tk.Button(edituserframe, text="Ukončit aplikaci", fg="black", command=exit)
     exitbutton.grid(row=9, column=2, sticky='w')
+
+def focus_user(event):
+    global focus_item
+    rowid = tv.identify_row(event.y)
+    delete_item = tv.item(tv.focus())
+    focus_item = delete_item['values']
+    print(focus_item)
+def delete_user():
+    print(focus_item[2])
+    try:
+        con = sqlite3.connect("example.db")
+
+        cur = con.cursor()
+
+        cur.execute("delete from person where (jmeno,prijmeni,rodne_cislo,pohlavi,email,telefon) == (?,?,?,?,?,?)", (focus_item[0], focus_item[1], focus_item[2],focus_item[3],focus_item[4], focus_item[5]))
+        con.commit()
+
+
+    except:
+        print ("není vybrán žádný uživatel")
+
 def exit():
     window.destroy()
 
@@ -261,6 +281,7 @@ data.close()
 con.close()
 
 tv.bind('<Double-1>', select_item)
+tv.bind('<ButtonRelease-1>', focus_user)
 tv.pack()
 
 
@@ -268,7 +289,7 @@ tv.pack()
 bluebutton = tk.Button(mainframe, text="Přidání uživatele", fg="black" , command=New_User)
 bluebutton.pack( side = tk.LEFT )
 
-blackbutton = tk.Button(mainframe, text="Odebrání uživatele", fg="black")
+blackbutton = tk.Button(mainframe, text="Odebrání uživatele", fg="black", command=delete_user)
 blackbutton.pack( side = tk.LEFT)
 
 blackbutton = tk.Button(mainframe, text="Ukončit aplikaci", fg="black", command=exit)
