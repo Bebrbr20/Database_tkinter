@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
 from tkinter import ttk
+import re
 from tkinter.messagebox import showinfo
 import  datetime
 
@@ -37,17 +38,33 @@ def validaceRC(rc):
                 return False
         else:
             return False
+    elif len(rc) == 10:
+        count = x[0] + x[1] + x[2] + x[3] + x[4] + x[5] + x[6] + x[7] + x[8] + x[9]
+        if int(count) % 11 == 0:
+            return True
+        else:
+            return False
     else:
         return False
 
 
+
+regex = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
+
+def isValid(email):
+    if re.fullmatch(regex, email):
+      return True
+    else:
+      return False
+
+
 # Funkce pro ověření a případné uložení uživatele do DB
 def save_user(newuserframe,jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon):
-    if jmeno.get() == '':
+    if jmeno.get() == '' or not jmeno.get().isalpha():
         jmeno.config(bg='red')
     else:
         jmeno.config(bg='white')
-    if prijmeni.get() == '':
+    if prijmeni.get() == '' or not prijmeni.get().isalpha():
         prijmeni.config(bg='red')
     else:
         prijmeni.config(bg='white')
@@ -55,21 +72,21 @@ def save_user(newuserframe,jmeno, prijmeni, rodne_cislo, pohlavi, email, telefon
         rodne_cislo.config(bg='red')
     else:
         rodne_cislo.config(bg='white')
-    if pohlavi.get() == '':
+    if pohlavi.get() == '' or pohlavi.get().isalpha():
         pohlavi.config(bg='red')
     else:
         pohlavi.config(bg='white')
-    if email.get() == '':
+    if email.get() == '' or not isValid(email.get()):
         email.config(bg='red')
     else:
         email.config(bg='white')
-    if telefon.get() == '':
+    if telefon.get() == '' or not telefon.get().isnumeric():
         telefon.config(bg='red')
     else:
         telefon.config(bg='white')
 
     if jmeno.get() != '' or prijmeni.get() != '' or rodne_cislo.get() != '' or pohlavi.get() != '' or email.get() != '' or telefon.get() != '':
-        if validaceRC(rodne_cislo.get()):
+        if validaceRC(rodne_cislo.get()) and isValid(email.get()) and jmeno.get().isalpha() and prijmeni.get().isalpha() and pohlavi.get().isalpha():
             try:
 
                 con = sqlite3.connect("example.db")
